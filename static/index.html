@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1020" />
+    <meta
+      name="description"
+      content="ClipNest — apna self-hosted video downloader. Link chipkao, quality chuno, download karo."
+    />
+    <title>ClipNest — Video Downloader</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="glow glow-a"></div>
+    <div class="glow glow-b"></div>
+
+    <main class="shell">
+      <header class="hero">
+        <span class="pill">Self-hosted · MIT</span>
+        <h1>Clip<span>Nest</span></h1>
+        <p class="tagline">
+          Video ka link chipkao, quality chuno aur seedha apne device par save karo.
+        </p>
+      </header>
+
+      <section class="card">
+        <form id="link-form" autocomplete="off">
+          <div class="input-row">
+            <input
+              id="url"
+              type="url"
+              name="url"
+              placeholder="https://... video ka link yahan daalo"
+              required
+              spellcheck="false"
+            />
+            <button id="check-btn" type="submit">Check karo</button>
+          </div>
+        </form>
+
+        <p id="error" class="error" role="alert" hidden></p>
+
+        <div id="result" class="result" hidden>
+          <div class="preview">
+            <div class="thumb-wrap">
+              <img id="thumb" alt="Video thumbnail" hidden />
+              <span id="thumb-fallback" class="thumb-fallback">🎬</span>
+            </div>
+            <div class="meta">
+              <h2 id="title">—</h2>
+              <p id="sub" class="sub">—</p>
+            </div>
+          </div>
+
+          <div class="controls">
+            <label class="field">
+              <span>Quality</span>
+              <select id="quality"></select>
+            </label>
+            <button id="start-btn" type="button" class="primary">Download shuru karo</button>
+          </div>
+
+          <div id="progress-wrap" class="progress-wrap" hidden>
+            <div class="bar"><div id="bar-fill"></div></div>
+            <div class="progress-meta">
+              <span id="status-text">Taiyari ho rahi hai…</span>
+              <span id="percent">0%</span>
+            </div>
+            <div class="progress-actions">
+              <a id="save-link" class="save" hidden>⬇ File save karo</a>
+              <button id="cancel-btn" type="button" class="ghost" hidden>Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <p>
+          Sirf wahi content download karein jiska aapko haq hai. Platform ki terms aur
+          copyright ka dhyan rakhein.
+        </p>
+        <p class="muted">ClipNest · <span id="engine-note">yt-dlp + direct links</span></p>
+      </footer>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
