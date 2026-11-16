@@ -43,6 +43,15 @@ class Job:
     updated_at: float = field(default_factory=time.time)
     cancel: Event = field(default_factory=Event)
 
+    # Optional metadata supplied by a frontend (the web API leaves these empty,
+    # the Telegram bot uses them for captions, thumbnails and targeted replies).
+    user_id: int | None = None
+    chat_id: int | None = None
+    thread_id: int | None = None
+    label: str | None = None
+    thumbnail: str | None = None
+    duration: int | None = None
+
 
 class JobManager:
     def __init__(self, settings: Settings, engines: list[BaseEngine]) -> None:
@@ -57,7 +66,19 @@ class JobManager:
     def engine_for(self, url: str) -> BaseEngine | None:
         return next((engine for engine in self.engines if engine.can_handle(url)), None)
 
-    def create(self, url: str, *, format_id: str | None = None, audio_only: bool = False) -> Job:
+    def create(
+        self,
+        url: str,
+        *,
+        format_id: str | None = None,
+        audio_only: bool = False,
+        user_id: int | None = None,
+        chat_id: int | None = None,
+        thread_id: int | None = None,
+        label: str | None = None,
+        thumbnail: str | None = None,
+        duration: int | None = None,
+    ) -> Job:
         job_id = secrets.token_hex(6)
         directory = self.settings.download_dir / job_id
         directory.mkdir(parents=True, exist_ok=True)
@@ -67,6 +88,12 @@ class JobManager:
             directory=directory,
             format_id=format_id,
             audio_only=audio_only,
+            user_id=user_id,
+            chat_id=chat_id,
+            thread_id=thread_id,
+            label=label,
+            thumbnail=thumbnail,
+            duration=duration,
         )
         self._jobs[job_id] = job
         task = asyncio.create_task(self._run(job), name=f"clipnest-job-{job_id}")
@@ -79,6 +106,33 @@ class JobManager:
 
     def active_count(self) -> int:
         return sum(1 for job in self._jobs.values() if job.status in {"queued", "running"})
+
+    def queue_position(self, job_id: str) -> int:
+        """1-based position among queued/running jobs; 0 if not waiting."""
+        job = self._jobs.get(job_id)
+        if job is None or job.status != "queued":
+            return 0
+        ahead = sum(
+            1
+            for other in self._jobs.values()
+            if other is not job
+            and other.status in {"queued", "running"}
+            and other.created_at < job.created_at
+        )
+        return ahead + 1
+
+    def active_jobs(self) -> list[Job]:
+        jobs = [job for job in self._jobs.values() if job.status in {"queued", "running"}]
+        return sorted(jobs, key=lambda job: job.created_at)
+
+    def cancel_all(self) -> int:
+        """Cancel every queued/running job; used during graceful shutdown."""
+        count = 0
+        for job in list(self._jobs.values()):
+            if job.status in {"queued", "running"}:
+                self.cancel(job.id)
+                count += 1
+        return count
 
     def cancel(self, job_id: str) -> Job | None:
         job = self._jobs.get(job_id)
@@ -156,7 +210,8 @@ class JobManager:
                     raise EngineError("Downloaded file missing hai.")
 
                 job.filename = path.name
-                job.title = path.stem
+                if not job.title:
+                    job.title = path.stem
                 job.filesize = path.stat().st_size
                 job.progress = 100.0
                 job.status = "finished"

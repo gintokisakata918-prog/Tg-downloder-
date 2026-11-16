@@ -1,12 +1,12 @@
 [project]
 name = "clipnest"
-version = "0.1.0"
-description = "Self-hosted video downloader with a clean web UI"
+version = "0.2.0"
+description = "Telegram video downloader bot with a self-hosted web UI"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Kamui", email = "314942876+gintokisakata918-prog@users.noreply.github.com" }]
-keywords = ["video-downloader", "fastapi", "self-hosted", "yt-dlp"]
+keywords = ["video-downloader", "telegram-bot", "fastapi", "self-hosted", "yt-dlp"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: FastAPI",
@@ -35,8 +35,8 @@ bot = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/gintokisakata918-prog/clipnest"
-Issues = "https://github.com/gintokisakata918-prog/clipnest/issues"
+Homepage = "https://github.com/gintokisakata918-prog/Tg-downloder-"
+Issues = "https://github.com/gintokisakata918-prog/Tg-downloder-/issues"
 
 [build-system]
 requires = ["hatchling"]
@@ -47,6 +47,7 @@ packages = ["app"]
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["colab.ipynb", ".venv"]
 target-version = "py311"
 src = ["app", "tests"]
 

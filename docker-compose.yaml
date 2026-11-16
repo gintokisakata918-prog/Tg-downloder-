@@ -13,6 +13,16 @@ services:
     volumes:
       - ./downloads:/app/downloads
       - ./data:/app/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
 
   # Telegram bot: `docker compose --profile bot up -d --build`
   # .env mein CLIPNEST_TELEGRAM_BOT_TOKEN set karna zaroori hai.
@@ -26,7 +36,28 @@ services:
       - .env
     environment:
       CLIPNEST_DOWNLOAD_DIR: /app/downloads
+      # Local Bot API use karna ho to .env mein yeh set karein:
+      # CLIPNEST_TELEGRAM_API_BASE_URL=http://telegram-bot-api:8081
+      CLIPNEST_TELEGRAM_API_BASE_URL: ${CLIPNEST_TELEGRAM_API_BASE_URL:-}
     volumes:
       - ./downloads:/app/downloads
       - ./data:/app/data
     profiles: ["bot"]
+    stop_grace_period: 30s
+
+  # 2 GB tak files ke liye local Bot API server (optional).
+  # Setup: .env mein TELEGRAM_API_ID aur TELEGRAM_API_HASH daalein, phir:
+  #   docker compose --profile bot --profile local-api up -d --build
+  telegram-bot-api:
+    image: aiogram/telegram-bot-api:latest
+    container_name: clipnest-telegram-api
+    restart: unless-stopped
+    environment:
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID:?TELEGRAM_API_ID .env mein set karein}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:?TELEGRAM_API_HASH .env mein set karein}
+      TELEGRAM_LOCAL: "1"
+    volumes:
+      - ./data/telegram-bot-api:/var/lib/telegram-bot-api
+    ports:
+      - "127.0.0.1:8081:8081"
+    profiles: ["local-api"]
