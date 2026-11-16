@@ -132,6 +132,7 @@ class ClipNestBot:
             [DirectEngine(settings), YtdlpEngine(settings)],
         )
         self._pending: dict[str, tuple[str, MediaInfo]] = {}
+        self._selected_probes: set[str] = set()
         self._hits: dict[int, deque[float]] = {}
         self._tasks: set[asyncio.Task[None]] = set()
 
@@ -280,7 +281,7 @@ class ClipNestBot:
             await message.reply_text("❌ Link check nahi ho paya. Dobara koshish karein.")
             return
 
-        probe_id = secrets.token_hex(4)
+        probe_id = secrets.token_hex(6)
         self._pending[probe_id] = (url, info)
         self._trim_pending()
 
@@ -359,13 +360,21 @@ class ClipNestBot:
 
         if kind in {"q", "a", "x"}:
             probe_id, _, format_id = rest.partition(":")
-            pending = self._pending.pop(probe_id, None)
+            if probe_id in self._selected_probes:
+                await self._edit_message(query, "⏳ Is link ka download pehle hi select ho chuka hai. Naya link bhejein.")
+                return
+            pending = self._pending.get(probe_id)
             if pending is None:
-                await self._edit_message(query, "⌛ Yeh link purana ho gaya. Link dobara bhejein.")
+                await self._edit_message(
+                    query,
+                    "⌛ Yeh button purana ho gaya ya bot restart hua hai. Link dobara bhejein.",
+                )
                 return
             url, info = pending
 
             if kind == "x":
+                self._pending.pop(probe_id, None)
+                self._selected_probes.add(probe_id)
                 await self._edit_message(query, "🛑 Cancel kar diya.")
                 return
 
@@ -380,6 +389,11 @@ class ClipNestBot:
                 await self._edit_message(query, f"❌ {exc}")
                 return
 
+            # Consume the probe once so rapid/double taps cannot create duplicate jobs.
+            self._pending.pop(probe_id, None)
+            self._selected_probes.add(probe_id)
+            if len(self._selected_probes) > 1000:
+                self._selected_probes.clear()
             job = self.manager.create(url, format_id=chosen, audio_only=audio_only)
             label = "MP3 (audio)" if audio_only else (format_id or "best")
             status_message = await self._edit_message(
