@@ -13,3 +13,20 @@ services:
     volumes:
       - ./downloads:/app/downloads
       - ./data:/app/data
+
+  # Telegram bot: `docker compose --profile bot up -d --build`
+  # .env mein CLIPNEST_TELEGRAM_BOT_TOKEN set karna zaroori hai.
+  clipnest-bot:
+    build: .
+    image: clipnest:latest
+    container_name: clipnest-bot
+    restart: unless-stopped
+    command: ["python", "-m", "app.telegram_bot"]
+    env_file:
+      - .env
+    environment:
+      CLIPNEST_DOWNLOAD_DIR: /app/downloads
+    volumes:
+      - ./downloads:/app/downloads
+      - ./data:/app/data
+    profiles: ["bot"]

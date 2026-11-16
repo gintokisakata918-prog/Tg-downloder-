@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     cookies_file: Path | None = None
     request_timeout_seconds: int = 30
     rate_limit_per_10min: int = 20
+    telegram_bot_token: str | None = None
+    telegram_allowed_users: str = ""
+    telegram_max_upload_mb: int = 50
     user_agent: str = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
@@ -51,6 +54,15 @@ class Settings(BaseSettings):
     @property
     def max_filesize_bytes(self) -> int:
         return self.max_filesize_mb * 1024 * 1024
+
+    @property
+    def telegram_allowed_user_ids(self) -> set[int]:
+        """Comma-separated user IDs; khali set ka matlab sab allowed."""
+        return {
+            int(chunk.strip())
+            for chunk in self.telegram_allowed_users.replace(";", ",").split(",")
+            if chunk.strip().lstrip("-").isdigit()
+        }
 
 
 @lru_cache

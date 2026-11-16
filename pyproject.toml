@@ -28,6 +28,10 @@ dependencies = [
 dev = [
     "pytest>=8.3",
     "ruff>=0.7",
+    "python-telegram-bot>=21.6",
+]
+bot = [
+    "python-telegram-bot>=21.6",
 ]
 
 [project.urls]
@@ -49,6 +53,9 @@ src = ["app", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 ignore = ["B008"]
+
+[project.scripts]
+clipnest-bot = "app.telegram_bot:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

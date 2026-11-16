@@ -14,7 +14,7 @@ COPY pyproject.toml README.md ./
 COPY app ./app
 COPY static ./static
 
-RUN pip install . \
+RUN pip install ".[bot]" \
     && useradd --create-home --shell /usr/sbin/nologin appuser \
     && mkdir -p /app/downloads \
     && chown -R appuser:appuser /app

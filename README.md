@@ -76,6 +76,51 @@ App: http://localhost:8000 · API docs: http://localhost:8000/api/docs
 
 ---
 
+## 🤖 Telegram bot
+
+Wahi engine, doosra frontend — link Telegram mein bhejein, file chat mein aa jaati hai.
+Yeh alag process hai, web app ke saath-saath chal sakta hai.
+
+**Setup**
+
+1. [@BotFather](https://t.me/BotFather) ko `/newbot` bhejein aur token copy karein.
+2. `.env` mein daalein:
+
+```shell
+CLIPNEST_TELEGRAM_BOT_TOKEN=123456789:AAExampleToken
+# optional: sirf kuch logon ko ijazat dein (apna ID bot mein /id se dekhein)
+CLIPNEST_TELEGRAM_ALLOWED_USERS=123456789
+```
+
+3. Chalayein:
+
+```shell
+# local
+uv sync --extra bot
+uv run python -m app.telegram_bot
+
+# Docker
+docker compose --profile bot up -d --build
+```
+
+**Bot commands**
+
+| Command | Kaam |
+|---|---|
+| link bhejein | Title + quality buttons (144p–4K, ya MP3) |
+| 🎵 MP3 | Sirf audio nikaalo |
+| 🛑 Cancel | Chal raha download rok do |
+| `/id` | Apna Telegram user ID (allowlist ke liye) |
+| `/help` | Madad |
+
+**Dhyan dein**
+
+* Telegram Bot API par ek file **50 MB** tak hi upload hoti hai (`CLIPNEST_TELEGRAM_MAX_UPLOAD_MB`
+  se badal sakte hain, lekin bina [local Bot API server](https://github.com/tdlib/telegram-bot-api)
+  ke zyada nahi jaayega). Badi video ke liye chhoti quality chunein.
+* `CLIPNEST_TELEGRAM_ALLOWED_USERS` khali chhodne par bot sabke liye khula hoga.
+* Rate limit har user par `CLIPNEST_RATE_LIMIT_PER_10MIN` se lagti hai.
+
 ## ⚙️ Configuration
 
 Saari settings environment variables se control hoti hain (prefix `CLIPNEST_`) ya `.env` file se.
@@ -89,7 +134,10 @@ Saari settings environment variables se control hoti hain (prefix `CLIPNEST_`) y
 | `CLIPNEST_MAX_DURATION_SECONDS` | `10800` | Max video length (3 ghante) |
 | `CLIPNEST_COOKIES_FILE` | – | Netscape format cookies file (private content ke liye) |
 | `CLIPNEST_ALLOW_PRIVATE_HOSTS` | `false` | Local network links allow karein? (sirf testing) |
-| `CLIPNEST_RATE_LIMIT_PER_10MIN` | `20` | Per-IP requests ki limit (0 = off) |
+| `CLIPNEST_RATE_LIMIT_PER_10MIN` | `20` | Per-IP / per-user requests ki limit (0 = off) |
+| `CLIPNEST_TELEGRAM_BOT_TOKEN` | – | Telegram bot token (bot chalane ke liye) |
+| `CLIPNEST_TELEGRAM_ALLOWED_USERS` | – | Allowed Telegram user IDs (khali = sab) |
+| `CLIPNEST_TELEGRAM_MAX_UPLOAD_MB` | `50` | Telegram par ek file ka max size |
 | `CLIPNEST_REQUEST_TIMEOUT_SECONDS` | `30` | Upstream request timeout |
 
 ---
@@ -142,6 +190,7 @@ clipnest/
 │   ├── jobs.py          # job manager (queue + progress + cleanup)
 │   ├── schemas.py       # request/response models
 │   ├── security.py      # URL validation + SSRF guard
+│   ├── telegram_bot.py  # Telegram frontend (same engines + JobManager)
 │   └── engines/
 │       ├── base.py      # engine interface
 │       ├── direct.py    # plain media URLs
