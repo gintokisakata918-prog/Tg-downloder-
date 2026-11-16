@@ -5,6 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-6d5efc.svg)](LICENSE)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gintokisakata918-prog/clipnest/blob/main/colab.ipynb)
 
 ClipNest ek chhota, clean web app hai jo video links ko metadata + download job mein badal deta hai.
 Backend do engines par kaam karta hai:
@@ -35,6 +36,16 @@ Frontend vanilla HTML/CSS/JS hai — koi build step nahi, koi heavy framework na
 ---
 
 ## 🚀 Quick start
+
+### ☁️ Google Colab (fastest try)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gintokisakata918-prog/clipnest/blob/main/colab.ipynb)
+
+Notebook kholiye → **Runtime → Run all**. Do-teen minute mein ek public
+`https://....trycloudflare.com` link mil jayega, koi server ki zaroorat nahi.
+
+> Colab session temporary hota hai (disconnect / ~12 ghante tak). Permanent hosting ke liye
+> Docker ya VPS use karein.
 
 ### Docker (recommended)
 
