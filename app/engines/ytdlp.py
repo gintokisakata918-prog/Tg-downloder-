@@ -240,4 +240,12 @@ class YtdlpEngine(BaseEngine):
     def _clean_error(exc: Exception) -> str:
         message = str(exc).replace("ERROR:", "").strip()
         message = message.splitlines()[0] if message else exc.__class__.__name__
+        lowered = message.lower()
+        if "isn't available to everyone" in lowered or "not available to everyone" in lowered:
+            return (
+                "Instagram ne is Reel ka access restrict kiya hai. Agar aapko is content "
+                "ko dekhne ki permission hai, apne logged-in Instagram session ki cookies "
+                "Colab mein cookies.txt ke roop mein upload karke dobara try karein. "
+                "Private ya restricted content bina permission access nahi kiya ja sakta."
+            )
         return f"Link process nahi hua: {message[:300]}"
