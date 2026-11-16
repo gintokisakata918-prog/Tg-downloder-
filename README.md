@@ -6,6 +6,7 @@
 [![python-telegram-bot](https://img.shields.io/badge/python--telegram--bot-21%2B-2CA5E0?logo=telegram&logoColor=white)](https://python-telegram-bot.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-6d5efc.svg)](LICENSE)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gintokisakata918-prog/Tg-downloder-/blob/main/colab.ipynb)
 
 ClipNest ek chhota, clean downloader hai jo do frontends share karta hai:
 
@@ -40,6 +41,25 @@ karte hain.
 - 🌐 **Webhook ya long polling** — production deployment ke liye
 - 👥 **Groups + forum topics** — requester ke card par sirf wahi buttons
 - 🇮🇳 **Hindi/Hinglish UI**
+
+---
+
+## ☁️ Google Colab (bina install, 2 minute)
+
+Sabse aasan tarika — laptop par kuch install nahi karna:
+
+1. [**Open in Colab**](https://colab.research.google.com/github/gintokisakata918-prog/Tg-downloder-/blob/main/colab.ipynb) dabayein.
+2. `Runtime → Run all` chalayein.
+3. BotFather token paste karein (masked input), phir Telegram mein `/start` bhejein.
+
+Notebook khud FFmpeg + dependencies install karta hai, aapka token `getMe` se verify
+karta hai, aur purane bot process ko band karke naya start karta hai. Token
+[Colab Secrets](https://colab.research.google.com/) mein `CLIPNEST_TELEGRAM_BOT_TOKEN`
+ke naam se bhi save kar sakte hain.
+
+> ⚠️ Colab free runtime temporary hai (idle par disconnect, max ~12 ghante) aur
+> upload limit cloud Bot API ki wajah se **50 MB** rehti hai. 24×7 chalane ya badi
+> files ke liye niche wala VPS/Docker setup use karein.
 
 ---
 
